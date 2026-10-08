@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+  <defs>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFC857"/>
+      <stop offset="1" stop-color="#FF8F3F"/>
+    </linearGradient>
+    <linearGradient id="work" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22D3BE"/>
+      <stop offset="1" stop-color="#0FA596"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1D3270"/>
+      <stop offset="1" stop-color="#0F1B45"/>
+    </linearGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="1.6" stdDeviation="1.7" flood-color="#06122e" flood-opacity="0.38"/>
+    </filter>
+  </defs>
+
+  <!-- calendar card -->
+  <g filter="url(#sh)">
+    <rect x="30" y="29" width="44" height="44" rx="8" fill="#FFFFFF"/>
+  </g>
+  <path d="M30 37a8 8 0 0 1 8-8h28a8 8 0 0 1 8 8v4.5H30z" fill="url(#band)"/>
+  <!-- binder rings -->
+  <rect x="39" y="25.5" width="3.6" height="8.4" rx="1.8" fill="#FFFFFF"/>
+  <rect x="61.4" y="25.5" width="3.6" height="8.4" rx="1.8" fill="#FFFFFF"/>
+
+  <!-- day grid: 4 x 3 -->
+  <g>
+    <!-- row 1 -->
+    <rect x="34.4" y="46"   width="7.2" height="6.4" rx="1.9" fill="url(#work)"/>
+    <rect x="43.9" y="46"   width="7.2" height="6.4" rx="1.9" fill="url(#work)"/>
+    <rect x="53.4" y="46"   width="7.2" height="6.4" rx="1.9" fill="#D5E1EC"/>
+    <rect x="62.9" y="46"   width="7.2" height="6.4" rx="1.9" fill="#D5E1EC"/>
+    <!-- row 2 -->
+    <rect x="34.4" y="54.6" width="7.2" height="6.4" rx="1.9" fill="#D5E1EC"/>
+    <rect x="43.9" y="54.6" width="7.2" height="6.4" rx="1.9" fill="url(#work)"/>
+    <rect x="53.4" y="54.6" width="7.2" height="6.4" rx="1.9" fill="url(#work)"/>
+    <rect x="62.9" y="54.6" width="7.2" height="6.4" rx="1.9" fill="#D5E1EC"/>
+    <!-- row 3 -->
+    <rect x="34.4" y="63.2" width="7.2" height="6.4" rx="1.9" fill="#D5E1EC"/>
+    <rect x="43.9" y="63.2" width="7.2" height="6.4" rx="1.9" fill="#D5E1EC"/>
+  </g>
+
+  <!-- clock badge -->
+  <g filter="url(#sh)">
+    <circle cx="69" cy="68.5" r="12.4" fill="#FFFFFF"/>
+  </g>
+  <circle cx="69" cy="68.5" r="10.2" fill="url(#face)"/>
+  <path d="M69 61.6V68.5l4.9 3" fill="none" stroke="#FFC857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="69" cy="68.5" r="1.45" fill="#FFFFFF"/>
+</svg>

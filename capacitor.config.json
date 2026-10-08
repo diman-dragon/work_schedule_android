@@ -1,0 +1,15 @@
+{
+  "appId": "com.shiftschedule.app",
+  "appName": "График смен",
+  "webDir": "www",
+  "backgroundColor": "#0E151D",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK"
+    }
+  }
+}
