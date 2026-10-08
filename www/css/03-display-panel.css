@@ -1,0 +1,60 @@
+/* 03-display-panel.css
+ * Панель отображения текущего месяца: часы и заработок — главные крупные
+ * цифры, число смен — второстепенный мелкий показатель. Средняя смена и
+ * итог за весь период перенесены во вкладку "Статистика" (там уже есть
+ * карточки "Средняя смена" и "Всего отработано"/"Общий заработок").
+ */
+.display-panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:24px 26px;
+  margin-bottom:22px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  gap:36px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+  text-align:center;
+}
+.display-panel::before{
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--accent), var(--teal), transparent);
+  opacity:0.7;
+}
+.led-block{text-align:center;}
+.led-label{
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--text-faint);
+  margin-bottom:6px;
+  font-weight:600;
+}
+.led-value{
+  font-family:var(--font-ui);
+  font-size:34px;
+  font-weight:600;
+  letter-spacing:-0.02em;
+  color:var(--accent);
+  line-height:1.15;
+}
+/* заработок и часы — главные цифры, одного и того же крупного размера */
+.led-block.main .led-value{font-size:38px; font-weight:700;}
+.led-block.main .led-label{font-size:11.5px;}
+/* число смен — второстепенный показатель, заметно мельче */
+.led-block.minor .led-value{font-size:19px; color:var(--text-dim); font-weight:600;}
+.led-block.minor .led-label{font-size:10px;}
+.led-value.small{font-size:25px; color:var(--text);}
+.led-value.duration{
+  font-family:var(--font-ui);
+  font-size:23px;
+  white-space:nowrap;
+}
+.led-block.main .led-value.duration{font-size:34px;}
+.led-unit{font-size:14px; color:var(--text-dim); font-weight:400; margin-left:3px;}

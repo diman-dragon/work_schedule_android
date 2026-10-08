@@ -1,0 +1,48 @@
+/* 02-month-strip.css
+ * Горизонтальная лента выбора месяца.
+ */
+/* MONTH STRIP */
+.months{
+  display:grid;
+  grid-template-columns:repeat(7, 1fr);
+  gap:8px;
+  margin-bottom:22px;
+}
+.month-btn{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:10px 10px;
+  cursor:pointer;
+  text-align:left;
+  transition:border-color .12s ease, background .12s ease, box-shadow .15s ease, transform .12s ease;
+  font-family:var(--font-ui);
+  box-shadow:var(--shadow-2);
+}
+.month-btn:hover{border-color:var(--accent); background:var(--accent-dim); box-shadow:var(--shadow-8); transform:translateY(-1px);}
+.month-btn.active{
+  background:var(--accent-dim);
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent);
+}
+.month-btn .m-name{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  display:block;
+}
+.month-btn.active .m-name{color:var(--accent);}
+.month-btn .m-year{
+  font-size:10px;
+  color:var(--text-faint);
+  font-family:var(--font-ui);
+}
+.month-btn .m-hours{
+  font-family:var(--font-ui);
+  font-size:10.5px;
+  color:var(--text-dim);
+  margin-top:5px;
+  display:block;
+  white-space:normal;
+  line-height:1.3;
+}

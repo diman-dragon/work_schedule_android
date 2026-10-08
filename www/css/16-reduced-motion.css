@@ -1,0 +1,17 @@
+/* 16-reduced-motion.css
+ * Уважение к prefers-reduced-motion — отключает все декоративные анимации
+ * (появление страницы/дней, "маршрутная линия" и заливка в шапке, пульс
+ * незавершённой смены, всплытие модалок и меню), оставляя обычные
+ * мгновенные переходы состояний.
+ */
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .route-marker{display:none;}
+}

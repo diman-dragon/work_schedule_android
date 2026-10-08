@@ -1,0 +1,8 @@
+/* 11-native-press-effect.css
+ * Нативный эффект "нажатия" для интерактивных элементов.
+ */
+/* нативное ощущение "нажатия" на всех интерактивных элементах */
+.btn:active, .save-btn:active, .theme-toggle:active, .month-btn:active,
+.tab-btn:active, .time-chip:active, .day:active{
+  transform:scale(.97);
+}

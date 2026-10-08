@@ -1,0 +1,41 @@
+/* 09-today-state-and-focus.css
+ * Повторное уточнение адаптивных правок для графиков статистики.
+ * (Подсветка .day.today теперь живёт в 05-calendar-grid.css, рядом с остальными
+ * состояниями плитки дня — раньше была здесь отдельно, что и создавало дубль
+ * с более поздним переопределением border-color.)
+ */
+@media (max-width:720px){
+  .charts-grid{grid-template-columns:1fr;}
+  .chart-card .chart-wrap{height:230px;}
+}
+.past-months{margin-bottom:14px;}
+.past-months summary{
+  cursor:pointer;
+  font-size:12px;
+  color:var(--text-dim);
+  padding:8px 2px;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  user-select:none;
+}
+.past-months summary::-webkit-details-marker{display:none;}
+.past-months summary::before{
+  content:'▸';
+  color:var(--accent);
+  transition:transform .15s ease;
+  font-size:10px;
+}
+.past-months[open] summary::before{transform:rotate(90deg);}
+.past-months summary:hover{color:var(--text);}
+.past-months .months{margin-top:10px;}
+
+/* ТЕПЛОВАЯ КАРТА: заливка идёт через inline-style, текст переводим на нейтральный
+   цвет, чтобы оставаться читаемым на любой насыщенности заливки */
+.cal-grid.heatmap-active .day .d-time,
+.cal-grid.heatmap-active .day .d-sum,
+.cal-grid.heatmap-active .day .d-dur,
+.cal-grid.heatmap-active .day .d-num{
+  color:var(--text);
+}

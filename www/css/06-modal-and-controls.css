@@ -1,0 +1,193 @@
+/* 06-modal-and-controls.css
+ * Базовая модалка дня, Win11-переключатель (ToggleSwitch), кнопки, чипы недавнего времени.
+ */
+/* MODAL */
+.modal-overlay{
+  position:fixed; inset:0;
+  background:var(--overlay);
+  backdrop-filter:blur(8px) saturate(150%);
+  -webkit-backdrop-filter:blur(8px) saturate(150%);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:20px;
+}
+.modal-overlay.show{display:flex; animation:fadein .18s ease;}
+@keyframes fadein{ from{opacity:0;} to{opacity:1;} }
+.modal{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  width:100%;
+  max-width:340px;
+  box-shadow:var(--shadow-8);
+  animation:popin .15s ease-out;
+  /* раньше высота ничем не ограничивалась: на невысоком окне браузера (типично
+     для десктопа) модалка была выше экрана и обрезалась сверху и снизу —
+     верхние подсказки "недавние смены" и кнопка "Сохранить" оказывались
+     за пределами видимой области без возможности прокрутки. Теперь модалка
+     сама скроллится внутри, если не помещается по высоте */
+  max-height:calc(100vh - 40px);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+@keyframes popin{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+.modal h3{font-size:17px; font-weight:600; margin-bottom:2px;}
+.modal .m-sub{font-size:12px; color:var(--text-dim); margin-bottom:20px;}
+/* #confirmMessage — универсальная модалка подтверждения; иногда в неё
+   передают многострочный текст (например, список бэкапов на выбор) через
+   textContent. По умолчанию переносы строк в HTML схлопываются в пробел —
+   без pre-line такой текст превращался бы в нечитаемую сплошную строку. */
+#confirmMessage{ white-space: pre-line; }
+.switch-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+.switch-row span{font-size:13.5px; font-weight:600;}
+/* Win11 ToggleSwitch: узкий трек, кружок смещается, заливка акцентом во включённом состоянии */
+.switch{
+  position:relative; width:40px; height:20px;
+  background:transparent;
+  border:1.5px solid var(--text-faint);
+  border-radius:var(--radius-pill); cursor:pointer;
+  transition:background .15s ease, border-color .15s ease;
+}
+.switch.on{background:var(--accent); border-color:var(--accent);}
+.switch .knob{
+  position:absolute; top:2px; left:2px;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--text-faint); transition:left .15s ease, background .15s ease, width .1s ease;
+}
+.switch.on .knob{left:22px; background:var(--accent-text); width:14px;}
+.switch:active .knob{width:18px;}
+.switch.on:active .knob{left:18px;}
+.time-row{display:flex; gap:10px; margin-bottom:16px;}
+.time-field{flex:1;}
+.time-field label{font-size:11px; color:var(--text-dim); display:block; margin-bottom:5px;}
+.time-field input{
+  width:100%;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:8px 9px;
+  font-family:var(--font-ui);
+  font-size:14px;
+  color:var(--text);
+  transition:border-color .12s ease, box-shadow .12s ease;
+}
+.time-field input:focus{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); outline:none;}
+.calc-preview{
+  font-size:12px;
+  color:var(--text-dim);
+  background:var(--surface-2);
+  border-radius:var(--radius-sm);
+  padding:9px 11px;
+  margin-bottom:18px;
+  line-height:1.6;
+}
+.calc-status{font-weight:700; font-size:12.5px;}
+.calc-status--future{color:var(--text-dim);}
+.calc-status--pending{color:var(--accent);}
+.calc-status--done{color:var(--positive, var(--teal));}
+.recent-times{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:14px;
+}
+.recent-times .rt-label{
+  width:100%;
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--text-faint);
+  margin-bottom:2px;
+  font-weight:600;
+}
+.time-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-pill);
+  padding:5px 10px 5px 11px;
+  font-family:var(--font-ui);
+  font-size:11.5px;
+  color:var(--text);
+  cursor:pointer;
+  transition:border-color .12s ease, background .12s ease;
+}
+.time-chip:hover{
+  border-color:var(--accent);
+  background:var(--accent-dim);
+}
+.time-chip .rt-count{
+  font-family:var(--font-ui);
+  font-size:9.5px;
+  color:var(--accent-text);
+  background:var(--accent);
+  border-radius:var(--radius-pill);
+  padding:1px 5px;
+  font-weight:700;
+  line-height:1.4;
+}
+.time-chip .rt-del{
+  color:var(--text-faint);
+  font-size:10px;
+  line-height:1;
+  padding:3px 4px;
+  margin-left:1px;
+  border-radius:50%;
+  cursor:pointer;
+}
+.time-chip .rt-del:hover{color:var(--negative); background:var(--negative-dim);}
+.modal-actions{display:flex; gap:10px;}
+.btn{
+  flex:1;
+  /* раньше height:36px было ЖЁСТКО фиксированным — часть подписей кнопок
+     подтверждения достаточно длинные ("Взять версию из облака", "Всё равно
+     заменить"), а модалка на телефоне узкая (кнопки делят ~280px на двоих);
+     если текст не помещался в одну строку, вторая строка обрезалась по
+     высоте кнопки. min-height позволяет кнопке вырасти, если текст перенёсся */
+  min-height:36px;
+  padding:8px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  line-height:1.25;
+  border-radius:var(--radius-pill);
+  border:1px solid var(--border);
+  font-size:13.5px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:var(--font-ui);
+  transition:background .12s ease, box-shadow .12s ease;
+}
+.btn:hover{box-shadow:0 0 0 1px var(--accent);}
+.btn-primary{background:var(--accent); color:var(--accent-text); border-color:var(--accent);}
+.btn-primary:hover{background:var(--accent-hover);}
+.btn-ghost{background:transparent; color:var(--text-dim);}
+.btn-ghost:hover{background:var(--surface-2);}
+.btn-sm{flex:0 0 auto; height:30px; padding:0 12px; font-size:12.5px;}
+
+
+.sync-conflict-modal{max-width:620px;}
+.sync-conflict-list{display:flex; flex-direction:column; gap:10px; margin-bottom:18px;}
+.sync-conflict-item{border:1px solid var(--border); border-radius:12px; padding:10px; background:var(--surface-2);}
+.sync-conflict-date{font-weight:700; font-size:13px; margin-bottom:8px;}
+.sync-conflict-cols{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+.sync-conflict-label{font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px;}
+.sync-conflict-value{font-size:12px; line-height:1.4; color:var(--text);}
+.sync-conflict-choice{display:flex; gap:8px; margin-top:9px;}
+.sync-conflict-choice .btn{min-height:32px; padding:6px 9px; font-size:12px;}
+.sync-choice.selected{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); background:var(--accent-dim);}
+@media (max-width:560px){
+  .sync-conflict-cols{grid-template-columns:1fr;}
+  .sync-conflict-choice{flex-direction:column;}
+}

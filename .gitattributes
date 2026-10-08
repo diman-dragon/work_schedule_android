@@ -1,0 +1,12 @@
+# Normalizes line endings so `git status` stops showing files as "modified"
+# purely because Windows Git checked them out with CRLF while they were
+# committed with LF (or vice versa) — this was pure noise, not real changes.
+* text=auto eol=lf
+
+# binary files: never touch line endings
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.xlsx binary
+*.zip binary
