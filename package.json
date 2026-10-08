@@ -8,7 +8,8 @@
     "android:sync": "cap sync android",
     "android:open": "cap open android",
     "android:run": "cap run android",
-    "android:build": "cd android && gradlew.bat assembleDebug"
+    "android:build": "cd android && ./gradlew assembleDebug",
+    "android:build:ci": "npx cap sync android && cd android && ./gradlew assembleDebug --no-daemon"
   },
   "dependencies": {
     "@capacitor/core": "^7.4.3"
