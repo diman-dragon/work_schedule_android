@@ -1,8 +1,6 @@
 /* main.js — запуск приложения. */
 'use strict';
 
-window.WS_VERSION = '1.0.0';
-
 const Theme = (() => {
   const KEY = 'ws2.theme';
   let pref = 'auto';
@@ -32,7 +30,7 @@ const Theme = (() => {
   Model.onChange(() => Calendar.render());
 
   $('menuBtn').addEventListener('click', Menu.open);
-  $('rateChip').addEventListener('click', Menu.open);
+  $('rateChip').addEventListener('click', Menu.openSettings);
 
   Calendar.render();
 

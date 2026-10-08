@@ -1,4 +1,4 @@
-/* menu.js — главное меню (шторка): расчёт, данные, оформление. */
+/* menu.js — меню и экран настроек. */
 'use strict';
 
 const Menu = (() => {
@@ -6,6 +6,31 @@ const Menu = (() => {
     `<button class="item ${cls || ''}" id="${id}"><span class="ic">${icon}</span><span class="tx"><b>${title}</b>${sub ? `<span>${sub}</span>` : ''}</span></button>`;
 
   function open() {
+    const body = document.createElement('div');
+    body.innerHTML = `
+      <div class="card">
+        ${item('mSettings', Icons.gear, 'Настройки', 'ставка, довоз, тема, версия')}
+      </div>
+      <div class="menu-sec">Данные</div>
+      <div class="card">
+        ${item('mImport', Icons.down, 'Импорт из файла', 'JSON из этого или прежнего приложения')}
+        ${item('mExportJson', Icons.up, 'Экспорт в JSON', 'полная копия графика')}
+        ${item('mExportCsv', Icons.table, 'Экспорт в CSV', 'для Excel и таблиц')}
+        ${item('mBackups', Icons.shield, 'Резервные копии', 'вернуть данные на прошлое состояние')}
+        ${item('mClear', Icons.trash, 'Удалить все данные', '', 'danger')}
+      </div>`;
+    const sheet = UI.sheet({ title: 'Меню', body });
+    const q = (id) => body.querySelector('#' + id);
+    const act = (id, fn) => q(id).addEventListener('click', () => { sheet.close(); setTimeout(fn, 120); });
+    act('mSettings', openSettings);
+    act('mImport', DataIO.importFile);
+    act('mExportJson', DataIO.exportJson);
+    act('mExportCsv', DataIO.exportCsv);
+    q('mBackups').addEventListener('click', DataIO.showBackups);
+    act('mClear', DataIO.clearAll);
+  }
+
+  function openSettings() {
     const S = Model.state;
     const body = document.createElement('div');
     body.innerHTML = `
@@ -18,25 +43,20 @@ const Menu = (() => {
         <div class="hint">Довоз до гаража добавляется к каждой смене по полной ставке. Новая ставка применяется к сменам, внесённым в этом приложении; значения, загруженные из старых файлов, не меняются.</div>
       </div>
 
-      <div class="menu-sec">Данные</div>
-      <div class="card">
-        ${item('mImport', Icons.down, 'Импорт из файла', 'JSON из этого или прежнего приложения')}
-        ${item('mExportJson', Icons.up, 'Экспорт в JSON', 'полная копия графика')}
-        ${item('mExportCsv', Icons.table, 'Экспорт в CSV', 'для Excel и таблиц')}
-        ${item('mBackups', Icons.shield, 'Резервные копии', 'вернуть данные на прошлое состояние')}
-        ${item('mClear', Icons.trash, 'Удалить все данные', '', 'danger')}
-      </div>
-
-      <div class="menu-sec">Оформление</div>
+      <div class="menu-sec">Тема</div>
       <div class="seg" id="mTheme">
-        <button data-t="auto">Авто</button><button data-t="dark">Тёмная</button><button data-t="light">Светлая</button>
+        <button data-t="auto">Авто</button><button data-t="dark">AMOLED</button><button data-t="light">Светлая</button>
       </div>
-      <div class="ver">График смен · v${escapeHtml(window.WS_VERSION || '1.0.0')}</div>`;
+      <div class="hint">AMOLED — чистый чёрный фон, светлая — тёплый светло-коричневый. «Авто» следует теме телефона.</div>
 
-    const sheet = UI.sheet({ title: 'Меню', body });
+      <div class="menu-sec">О приложении</div>
+      <div class="card">
+        <div class="setrow"><b>Версия</b><span>${escapeHtml(window.WS_VERSION || '—')}</span></div>
+        <div class="setrow"><b>Смен в памяти</b><span>${Model.countShifts()}</span></div>
+      </div>`;
+    const sheet = UI.sheet({ title: 'Настройки', body, actions: [{ label: 'Готово', kind: 'primary' }] });
     const q = (id) => body.querySelector('#' + id);
 
-    /* --- расчёт --- */
     const applySettings = () => {
       const rate = parseFloat(String(q('mRate').value).replace(',', '.'));
       const garage = parseInt(q('mGarage').value, 10);
@@ -50,22 +70,14 @@ const Menu = (() => {
     q('mRate').addEventListener('change', applySettings);
     q('mGarage').addEventListener('change', applySettings);
 
-    /* --- данные --- */
-    const act = (id, fn) => q(id).addEventListener('click', () => { sheet.close(); setTimeout(fn, 120); });
-    act('mImport', DataIO.importFile);
-    act('mExportJson', DataIO.exportJson);
-    act('mExportCsv', DataIO.exportCsv);
-    q('mBackups').addEventListener('click', DataIO.showBackups);
-    act('mClear', DataIO.clearAll);
-
-    /* --- тема --- */
     const markTheme = () => body.querySelectorAll('#mTheme button').forEach((b) => b.classList.toggle('on', b.dataset.t === Theme.pref));
     markTheme();
     q('mTheme').addEventListener('click', (e) => {
       const b = e.target.closest('[data-t]');
       if (b) { Theme.set(b.dataset.t); markTheme(); }
     });
+    return sheet;
   }
 
-  return { open };
+  return { open, openSettings };
 })();

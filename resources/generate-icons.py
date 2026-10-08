@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageChops
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RES = os.path.join(HERE, '..', 'android', 'app', 'src', 'main', 'res')
-SPLASH_BG = '#0E151D'
+SPLASH_BG = '#000000'
 
 
 def render(svg_text_or_path, px):

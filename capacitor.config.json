@@ -2,7 +2,7 @@
   "appId": "com.shiftschedule.app",
   "appName": "График смен",
   "webDir": "www",
-  "backgroundColor": "#0E151D",
+  "backgroundColor": "#000000",
   "android": {
     "allowMixedContent": false
   },

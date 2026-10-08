@@ -36,11 +36,6 @@ jobs:
       - name: Синхронизация веб-части в Android-проект
         run: npx cap sync android
 
-      - name: Версия сборки
-        run: |
-          echo "APP_VERSION_CODE=${{ github.run_number }}" >> "$GITHUB_ENV"
-          echo "APP_VERSION_NAME=1.0.${{ github.run_number }}" >> "$GITHUB_ENV"
-
       - name: Сборка APK
         working-directory: android
         run: |
