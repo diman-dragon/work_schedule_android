@@ -28,25 +28,13 @@ const Theme = (() => {
   Model.load();
   Calendar.init();
   $('menuBtn').innerHTML = Icons.menu;
-  $('cloudBtn').innerHTML = Icons.cloud + '<i class="dot"></i>';
 
-  const refreshCloudBtn = () => {
-    const btn = $('cloudBtn');
-    btn.hidden = !Cloud.isConnected();
-    const k = Cloud.status().kind;
-    btn.className = 'icon-btn cloud-btn ' + (k === 'busy' ? 'busy ' : '') + ({ ok: 'ok', warn: 'dirty', err: 'err' }[k] || '');
-    btn.setAttribute('title', Cloud.status().text);
-  };
-
-  Model.onChange(() => { Calendar.render(); refreshCloudBtn(); });
-  Cloud.onChange(refreshCloudBtn);
+  Model.onChange(() => Calendar.render());
 
   $('menuBtn').addEventListener('click', Menu.open);
   $('rateChip').addEventListener('click', Menu.open);
-  $('cloudBtn').addEventListener('click', () => Cloud.sync());
 
   Calendar.render();
-  refreshCloudBtn();
 
   // кнопка «Назад»: закрыть шторку → вернуться к текущему месяцу → выйти
   Native.onBack(() => {
@@ -56,8 +44,8 @@ const Theme = (() => {
     Native.exitApp();
   });
 
-  // возврат в приложение: перерисовать (мог смениться день/идущая смена) и проверить вход в Google
-  Native.onResume(() => { Calendar.render(); refreshCloudBtn(); Cloud.nudge(); });
+  // возврат в приложение: перерисовать (мог смениться день/идущая смена)
+  Native.onResume(() => Calendar.render());
 
   // раз в минуту: смена закончилась → доход попадает в итоги сам
   let hadPending = Model.hasPending();

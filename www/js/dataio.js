@@ -100,7 +100,7 @@ const DataIO = (() => {
               <div class="tx"><b>${escapeHtml(fmtWhen(b.at))}</b><span>${escapeHtml(b.reason || '')} · смен: ${b.shifts}</span></div>
               <button class="btn ghost small" data-key="${escapeHtml(b.key)}">Вернуть</button>
             </div>`).join('')}</div>
-          <div class="hint">Хранятся последние 5 копий. Они создаются автоматически перед импортом, очисткой и синхронизацией.</div>`
+          <div class="hint">Хранятся последние 5 копий. Они создаются автоматически перед импортом и очисткой.</div>`
         : '<div class="hint">Резервных копий пока нет.</div>';
     };
     draw();
@@ -125,7 +125,7 @@ const DataIO = (() => {
     if (!Object.keys(Model.state.days).length) { UI.toast('Данные уже пусты'); return; }
     const ok = await UI.confirm({
       title: 'Удалить все данные графика?',
-      text: 'Все смены будут удалены с этого телефона. Копия перед очисткой сохранится в резервных копиях.\n\nДанные в Google Диске не затрагиваются — при следующей синхронизации они вернутся.',
+      text: 'Все смены будут удалены с этого телефона. Копия перед очисткой сохранится в резервных копиях.',
       ok: 'Удалить', danger: true
     });
     if (!ok) return;

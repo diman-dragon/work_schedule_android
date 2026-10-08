@@ -273,15 +273,6 @@ const Model = (() => {
     commit();
   }
 
-  /** Результат слияния с облаком (days уже объединены). */
-  function applyMerged(days, settings) {
-    S.days = days;
-    if (settings) {
-      S.rate = settings.rate; S.garageMin = settings.garageMin; S.settingsAt = settings.settingsAt;
-    }
-    commit();
-  }
-
   /* ---------------- подсказки ---------------- */
 
   function recent(fn, limit) {
@@ -414,22 +405,15 @@ const Model = (() => {
     return '\uFEFF' + csv;
   }
 
-  /* ---------------- признаки для синхронизации ---------------- */
-
-  const dayHasUserData = (d) => !!(d && (d.start || d.edited));
-  /** Подпись содержимого дня: одинаковые подписи — конфликта нет. */
-  const daySig = (d) => (!d ? '' : d.start ? [d.start, d.end, d.bus || '', d.route || ''].join('|') : d.edited ? 'OFF' : '');
-
   return {
     load, onChange, commit,
     get state() { return S; },
     get loadNote() { const n = loadNote; loadNote = null; return n; },
-    getDay, setDay, setSettings, clearAll, replaceAll, mergeIn, applyMerged,
+    getDay, setDay, setSettings, clearAll, replaceAll, mergeIn,
     info, calcShift, monthStats, hasPending,
     recentTimes, recentBuses, recentRoutes,
     createBackup, listBackups, restoreBackup,
     fromLegacy, toLegacy, toCsv,
-    dayHasUserData, daySig,
     countShifts: () => Object.values(S.days).filter((d) => d.start).length,
     hasData: () => Object.values(S.days).some((d) => d.start),
     GARAGE_DEFAULT: 20

@@ -100,14 +100,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .month-title .year { color: var(--muted); font-weight: 500; }
 .month-title:active { background: var(--surface-2); }
 
-.cloud-btn .dot {
-  position: absolute; right: 8px; top: 8px; width: 9px; height: 9px; border-radius: 50%;
-  background: var(--faint); border: 2px solid var(--bg);
-}
-.cloud-btn.ok .dot { background: var(--ok); }
-.cloud-btn.dirty .dot { background: var(--amber); }
-.cloud-btn.err .dot { background: var(--danger); }
-.cloud-btn.busy svg { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ---------- итоги ---------- */
@@ -281,10 +273,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .seg button { flex: 1; min-height: 38px; border: 0; border-radius: 9px; background: transparent; font-weight: 600; font-size: 14px; color: var(--muted); }
 .seg button.on { background: var(--accent); color: var(--accent-ink); }
 
-.sync-status { font-size: 13.5px; padding: 2px 2px 10px; color: var(--muted); }
-.sync-status.ok { color: var(--ok); }
-.sync-status.warn { color: var(--amber); }
-.sync-status.err { color: var(--danger); }
 .ver { text-align: center; color: var(--faint); font-size: 12px; margin: 14px 0 2px; }
 
 /* ---------- выбор месяца ---------- */
@@ -296,31 +284,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .months button.sel { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
 .months button .dt { position: absolute; top: 7px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .months button.sel .dt { background: var(--accent-ink); }
-
-/* ---------- облако: код входа ---------- */
-.code {
-  margin: 6px 0 12px; padding: 16px; border-radius: 16px; text-align: center;
-  background: var(--surface-2); border: 1px dashed var(--accent-line);
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 30px; font-weight: 800; letter-spacing: 4px; color: var(--accent);
-  -webkit-user-select: text; user-select: text;
-}
-.steps { margin: 0 0 4px; padding-left: 20px; color: var(--muted); font-size: 14px; line-height: 1.55; }
-.steps b { color: var(--text); }
-.waiting { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: var(--muted); font-size: 13.5px; }
-.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: spin .9s linear infinite; flex: none; }
-
-.conf { padding: 10px 12px; border-top: 1px solid var(--line); }
-.conf:first-child { border-top: 0; }
-.conf .d { font-weight: 700; margin-bottom: 6px; }
-.conf .seg button { font-size: 13px; padding: 4px 6px; line-height: 1.2; }
-.conf .seg button small { display: block; font-weight: 500; opacity: .85; }
-.bulk { display: flex; gap: 8px; margin-bottom: 10px; }
-
-.backup-row { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-top: 1px solid var(--line); }
-.backup-row:first-child { border-top: 0; }
-.backup-row .tx { flex: 1; min-width: 0; }
-.backup-row .tx b { display: block; font-size: 14.5px; }
-.backup-row .tx span { display: block; font-size: 12.5px; color: var(--muted); }
 
 /* ---------- тост ---------- */
 .toast {

@@ -1,4 +1,4 @@
-/* menu.js — главное меню (шторка): расчёт, Google Диск, данные, оформление. */
+/* menu.js — главное меню (шторка): расчёт, данные, оформление. */
 'use strict';
 
 const Menu = (() => {
@@ -17,9 +17,6 @@ const Menu = (() => {
         </div>
         <div class="hint">Довоз до гаража добавляется к каждой смене по полной ставке. Новая ставка применяется к сменам, внесённым в этом приложении; значения, загруженные из старых файлов, не меняются.</div>
       </div>
-
-      <div class="menu-sec">Google Диск</div>
-      <div class="card" id="mCloud"></div>
 
       <div class="menu-sec">Данные</div>
       <div class="card">
@@ -52,29 +49,6 @@ const Menu = (() => {
     };
     q('mRate').addEventListener('change', applySettings);
     q('mGarage').addEventListener('change', applySettings);
-
-    /* --- облако --- */
-    const drawCloud = () => {
-      if (!body.isConnected) return;
-      const box = q('mCloud');
-      const s = Cloud.status();
-      let h = `<div class="sync-status ${s.kind === 'ok' ? 'ok' : s.kind === 'warn' ? 'warn' : s.kind === 'err' ? 'err' : ''}" style="padding:12px 14px 4px">${escapeHtml(s.text)}</div>`;
-      if (Cloud.isConnected()) {
-        h += item('mSync', Icons.sync, 'Синхронизировать', 'объединить данные с облаком')
-          + item('mRestore', Icons.cloud, 'Загрузить из облака', 'заменить данные на телефоне')
-          + item('mDisc', Icons.unlink, 'Отключить', '', 'danger');
-      } else {
-        h += item('mConnect', Icons.link, 'Подключить Google Диск', 'данные хранятся зашифрованными');
-      }
-      box.innerHTML = h;
-      const on = (id, fn) => { const el = box.querySelector('#' + id); if (el) el.addEventListener('click', fn); };
-      on('mSync', () => { sheet.close(); Cloud.sync(); });
-      on('mRestore', () => { sheet.close(); Cloud.restore(); });
-      on('mDisc', () => Cloud.disconnect());
-      on('mConnect', () => { sheet.close(); Cloud.connect(); });
-    };
-    drawCloud();
-    Cloud.onChange(drawCloud);
 
     /* --- данные --- */
     const act = (id, fn) => q(id).addEventListener('click', () => { sheet.close(); setTimeout(fn, 120); });

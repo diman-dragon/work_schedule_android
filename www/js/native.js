@@ -15,53 +15,8 @@ const Native = (() => {
 
   const Filesystem = plugin('Filesystem');
   const Share = plugin('Share');
-  const Browser = plugin('Browser');
   const AppPlugin = plugin('App');
   const SystemBars = plugin('SystemBars');
-  const Http = plugin('CapacitorHttp');
-
-  /** POST application/x-www-form-urlencoded → { status, data } (data — объект или строка).
-   *  На телефоне идёт через нативный HTTP-клиент: без ограничений CORS у OAuth-эндпоинтов Google. */
-  async function postForm(url, fields) {
-    if (Http) {
-      const r = await Http.request({
-        url, method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data: fields
-      });
-      let data = r.data;
-      if (typeof data === 'string') { try { data = JSON.parse(data); } catch (e) { /* оставляем строкой */ } }
-      return { status: r.status, data: data || {} };
-    }
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(fields).toString()
-    });
-    let data = {};
-    try { data = await res.json(); } catch (e) { /* пусто */ }
-    return { status: res.status, data };
-  }
-
-  async function copyText(text) {
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); return true; }
-    } catch (e) { /* пробуем запасной путь */ }
-    try {
-      const ta = document.createElement('textarea');
-      ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
-      document.body.appendChild(ta); ta.select();
-      const ok = document.execCommand('copy');
-      ta.remove();
-      return ok;
-    } catch (e) { return false; }
-  }
-
-  function openUrl(url) {
-    if (Browser) return Browser.open({ url });
-    window.open(url, '_blank', 'noopener');
-    return Promise.resolve();
-  }
 
   /** Сохраняет текст во временный файл и открывает системное меню «Поделиться / Сохранить в…». */
   async function saveAndShare(filename, text, mime) {
@@ -97,5 +52,5 @@ const Native = (() => {
     if (SystemBars) SystemBars.setStyle({ style: dark ? 'DARK' : 'LIGHT' }).catch(() => {});
   }
 
-  return { isNative, postForm, copyText, openUrl, saveAndShare, onBack, onResume, exitApp, setBarStyle };
+  return { isNative, saveAndShare, onBack, onResume, exitApp, setBarStyle };
 })();
