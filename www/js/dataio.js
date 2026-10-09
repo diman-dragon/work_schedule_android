@@ -51,9 +51,10 @@ const DataIO = (() => {
     if (!f) return;
     let parsed;
     try {
-      parsed = Model.fromLegacy(JSON.parse(f.text.replace(/^\uFEFF/, '')));
+      const txt = f.text.replace(/^\uFEFF/, '');
+      parsed = /^\s*[\[{]/.test(txt) ? Model.fromLegacy(JSON.parse(txt)) : Model.fromCsv(txt);
     } catch (err) {
-      await UI.notice({ title: 'Не удалось открыть файл', text: 'Нужен JSON, сохранённый этим приложением или прежним веб-приложением «Рабочий график».\n\nПричина: ' + (err && err.message ? err.message : err) });
+      await UI.notice({ title: 'Не удалось открыть файл', text: 'Нужен JSON или CSV, сохранённый этим приложением или прежним веб-приложением «Рабочий график».\n\nПричина: ' + (err && err.message ? err.message : err) });
       return;
     }
     const entries = Object.keys(parsed.days);

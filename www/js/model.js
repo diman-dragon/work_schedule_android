@@ -331,6 +331,87 @@ const Model = (() => {
     return out;
   }
 
+
+  /* ---------------- импорт CSV ---------------- */
+
+  function parseCsvRows(text) {
+    const first = text.split(/\r?\n/, 1)[0] || '';
+    const delim = first.split(';').length >= first.split(',').length ? ';' : ',';
+    const rows = [];
+    let row = [], cur = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+        else cur += c;
+      } else if (c === '"') q = true;
+      else if (c === delim) { row.push(cur); cur = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && text[i + 1] === '\n') i++;
+        row.push(cur); cur = '';
+        if (row.some((v) => v.trim() !== '')) rows.push(row);
+        row = [];
+      } else cur += c;
+    }
+    row.push(cur);
+    if (row.some((v) => v.trim() !== '')) rows.push(row);
+    return rows;
+  }
+
+  const normTime = (v) => {
+    const m = /^\s*(\d{1,2})[:.](\d{2})\s*$/.exec(v || '');
+    if (!m) return null;
+    const t = pad2(+m[1]) + ':' + m[2];
+    return TIME_RE.test(t) ? t : null;
+  };
+
+  function csvMinutes(minCol, durCol) {
+    const n = parseInt(String(minCol || '').trim(), 10);
+    if (Number.isFinite(n) && n > 0 && n <= MAX_MINUTES) return n;
+    const d = String(durCol || '');
+    const h = /(\d+)\s*ч/i.exec(d), m = /(\d+)\s*м/i.exec(d);
+    if (h || m) return (h ? +h[1] : 0) * 60 + (m ? +m[1] : 0);
+    const hm = /^\s*(\d+):(\d{2})\s*$/.exec(d);
+    return hm ? +hm[1] * 60 + +hm[2] : null;
+  }
+
+  /** CSV, сохранённый прежним веб-приложением или этим (разделитель «;», дата ДД.ММ.ГГГГ). */
+  function fromCsv(text) {
+    const rows = parseCsvRows(text.replace(/^\uFEFF/, ''));
+    if (rows.length < 2) throw new Error('в CSV нет строк с данными');
+    const head = rows[0].map((h) => h.trim().toLowerCase());
+    const find = (re, fallback) => { const i = head.findIndex((h) => re.test(h)); return i >= 0 ? i : fallback; };
+    const col = {
+      date: find(/^дата/, 2), start: find(/^начало/, 4), end: find(/^конец/, 5),
+      dur: find(/^длительность/, 6), min: find(/^минут/, -1), sum: find(/^сумма/, 7),
+      bus: find(/^автобус/, 9), route: find(/^маршрут/, 10)
+    };
+    // у прежнего файла «Минут» нет, а «Автобус/Маршрут» стоят на 8–9 местах
+    if (!head.some((h) => /^автобус/.test(h)) && rows[0].length === 10) { col.bus = 8; col.route = 9; col.sum = 7; }
+    const get = (r, i) => (i >= 0 && i < r.length ? r[i] : '');
+    const days = {};
+    let skipped = 0;
+    for (const r of rows.slice(1)) {
+      const dateStr = get(r, col.date).trim();
+      let iso = ruToIso(dateStr);
+      if (!iso && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) iso = dateStr;
+      if (!iso) { skipped++; continue; }
+      const start = normTime(get(r, col.start)), end = normTime(get(r, col.end));
+      if (!start || !end) continue;                 // день без смены
+      const rec = { start, end, edited: false };
+      const bus = cleanStr(get(r, col.bus)), route = cleanStr(get(r, col.route));
+      if (bus) rec.bus = bus;
+      if (route) rec.route = route;
+      const minutes = csvMinutes(get(r, col.min), get(r, col.dur));
+      const sum = parseFloat(String(get(r, col.sum)).replace(/[\s\u00a0]/g, '').replace(',', '.'));
+      if (minutes != null) rec.minutes = minutes;
+      if (Number.isFinite(sum) && sum >= 0 && minutes != null) rec.sum = sum;
+      days[iso] = rec;
+    }
+    if (!Object.keys(days).length) throw new Error('в CSV не найдено смен (нужны колонки «Дата», «Начало», «Конец»)');
+    return { days, skipped, rate: null, garageMin: null, settingsAt: 0 };
+  }
+
   /** Данные в формате, который читает и это приложение, и исходное веб-приложение. */
   function toLegacy(daysMap = S.days) {
     const monthIds = [...new Set(Object.keys(daysMap).map((iso) => iso.slice(0, 7)))].sort();
@@ -413,7 +494,7 @@ const Model = (() => {
     info, calcShift, monthStats, hasPending,
     recentTimes, recentBuses, recentRoutes,
     createBackup, listBackups, restoreBackup,
-    fromLegacy, toLegacy, toCsv,
+    fromLegacy, fromCsv, toLegacy, toCsv,
     countShifts: () => Object.values(S.days).filter((d) => d.start).length,
     hasData: () => Object.values(S.days).some((d) => d.start),
     GARAGE_DEFAULT: 20

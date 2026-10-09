@@ -13,7 +13,7 @@ const Menu = (() => {
       </div>
       <div class="menu-sec">Данные</div>
       <div class="card">
-        ${item('mImport', Icons.down, 'Импорт из файла', 'JSON из этого или прежнего приложения')}
+        ${item('mImport', Icons.down, 'Импорт из файла', 'JSON или CSV, в том числе из веб-версии')}
         ${item('mExportJson', Icons.up, 'Экспорт в JSON', 'полная копия графика')}
         ${item('mExportCsv', Icons.table, 'Экспорт в CSV', 'для Excel и таблиц')}
         ${item('mBackups', Icons.shield, 'Резервные копии', 'вернуть данные на прошлое состояние')}
