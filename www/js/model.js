@@ -24,7 +24,8 @@ const Model = (() => {
   const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
   const MAX_MINUTES = 24 * 60 + 180;
 
-  const fresh = () => ({ schema: SCHEMA, rate: 700, garageMin: 20, settingsAt: 0, updatedAt: 0, days: {} });
+  const fresh = () => ({ schema: SCHEMA, rate: 700, garageMin: 20, settingsAt: 0, updatedAt: 0, days: {}, hidden: { t: [], b: [], r: [] } });
+  const SUGGEST_LIMIT = 3;   // сколько подсказок показываем
   let S = fresh();
   let loadNote = null;           // сообщение для показа после старта (если пришлось восстанавливаться)
   const listeners = [];
@@ -64,6 +65,11 @@ const Model = (() => {
     if (Number.isInteger(raw.garageMin) && raw.garageMin >= 0 && raw.garageMin <= 180) st.garageMin = raw.garageMin;
     st.settingsAt = Number(raw.settingsAt) || 0;
     st.updatedAt = Number(raw.updatedAt) || 0;
+    if (raw.hidden && typeof raw.hidden === 'object') {
+      for (const k of ['t', 'b', 'r']) {
+        if (Array.isArray(raw.hidden[k])) st.hidden[k] = raw.hidden[k].filter((v) => typeof v === 'string').slice(0, 300);
+      }
+    }
     for (const iso of Object.keys(raw.days)) {
       if (!ISO_RE.test(iso)) continue;
       const dt = parseIso(iso);
@@ -235,6 +241,7 @@ const Model = (() => {
       if (bus) r.bus = bus;
       if (route) r.route = route;
       S.days[iso] = r;
+      unhide('t', r.start + '|' + r.end); unhide('b', r.bus); unhide('r', r.route);
     } else {
       S.days[iso] = { edited: true };
     }
@@ -252,7 +259,7 @@ const Model = (() => {
 
   function clearAll() {
     createBackup('перед полной очисткой');
-    S = Object.assign(fresh(), { rate: S.rate, garageMin: S.garageMin, settingsAt: S.settingsAt });
+    S = Object.assign(fresh(), { rate: S.rate, garageMin: S.garageMin, settingsAt: S.settingsAt, hidden: S.hidden });
     commit();
   }
 
@@ -275,12 +282,13 @@ const Model = (() => {
 
   /* ---------------- подсказки ---------------- */
 
-  function recent(fn, limit) {
+  function recent(fn, limit, kind) {
+    const hidden = new Set(S.hidden[kind] || []);
     const map = new Map();
     for (const iso of Object.keys(S.days)) {
       const d = S.days[iso];
       const val = fn(d);
-      if (!val) continue;
+      if (!val || hidden.has(val)) continue;
       const e = map.get(val) || { val, count: 0, last: '' };
       e.count++;
       if (iso > e.last) e.last = iso;
@@ -289,10 +297,20 @@ const Model = (() => {
     return [...map.values()].sort((a, b) => (b.last < a.last ? -1 : b.last > a.last ? 1 : b.count - a.count)).slice(0, limit);
   }
 
-  const recentTimes = (limit = 8) => recent((d) => (d.start && d.end ? d.start + '|' + d.end : null), limit)
+  const recentTimes = (limit = SUGGEST_LIMIT) => recent((d) => (d.start && d.end ? d.start + '|' + d.end : null), limit, 't')
     .map((e) => { const [start, end] = e.val.split('|'); return { start, end, count: e.count }; });
-  const recentBuses = (limit = 6) => recent((d) => d.bus || null, limit).map((e) => e.val);
-  const recentRoutes = (limit = 6) => recent((d) => d.route || null, limit).map((e) => e.val);
+  const recentBuses = (limit = SUGGEST_LIMIT) => recent((d) => d.bus || null, limit, 'b').map((e) => e.val);
+  const recentRoutes = (limit = SUGGEST_LIMIT) => recent((d) => d.route || null, limit, 'r').map((e) => e.val);
+
+  /** Убрать значение из подсказок (kind: 't' — время смены 'ЧЧ:ММ|ЧЧ:ММ', 'b' — автобус, 'r' — маршрут). */
+  function hideSuggestion(kind, val) {
+    if (!S.hidden[kind].includes(val)) { S.hidden[kind].push(val); commit(); }
+  }
+  function unhide(kind, val) {
+    if (!val) return;
+    const i = S.hidden[kind].indexOf(val);
+    if (i >= 0) S.hidden[kind].splice(i, 1);
+  }
 
   /* ---------------- совместимость с форматом исходного приложения ---------------- */
 
@@ -492,7 +510,7 @@ const Model = (() => {
     get loadNote() { const n = loadNote; loadNote = null; return n; },
     getDay, setDay, setSettings, clearAll, replaceAll, mergeIn,
     info, calcShift, monthStats, hasPending,
-    recentTimes, recentBuses, recentRoutes,
+    recentTimes, recentBuses, recentRoutes, hideSuggestion,
     createBackup, listBackups, restoreBackup,
     fromLegacy, fromCsv, toLegacy, toCsv,
     countShifts: () => Object.values(S.days).filter((d) => d.start).length,

@@ -239,11 +239,15 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .chips::-webkit-scrollbar { display: none; }
 .chips.wrap { flex-wrap: wrap; overflow: visible; }
 .pick {
-  flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 13px;
-  border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums;
+  flex: none; display: inline-flex; align-items: stretch; min-height: 38px;
+  border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden;
+  font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums;
 }
-.pick:active, .pick.on { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent); }
-.pick .cnt { font-size: 11px; color: var(--muted); font-weight: 600; }
+.pick button { background: transparent; border: 0; color: inherit; font: inherit; }
+.pick .pk-main { padding: 0 6px 0 13px; }
+.pick .pk-x { width: 34px; color: var(--muted); font-size: 18px; line-height: 1; }
+.pick .pk-main:active { background: var(--accent-soft); color: var(--accent); }
+.pick .pk-x:active { background: color-mix(in srgb, var(--danger) 18%, transparent); color: var(--danger); }
 
 .preview { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); font-size: 14px; line-height: 1.5; }
 .preview .st { display: inline-block; margin-bottom: 2px; font-weight: 700; }
